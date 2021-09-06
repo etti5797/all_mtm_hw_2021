@@ -15,6 +15,7 @@ namespace mtm
         const int MODULO_HITS=3;
         const int DOUBLE=2;
         const int MODULO_DISTANCE=2;
+        int hit_targets = 0;
 
         public:
         Sniper(int health, int ammo, int range, int power, Team team);
@@ -23,7 +24,7 @@ namespace mtm
         Sniper& operator=(const Sniper& other)=default;   
         void reloadAmmo() override;
         bool checkIfDead() override;
-        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int* damage) override;
+        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int &damage) override;
         std::shared_ptr<Character> clone() const override;
         void attack(std::shared_ptr<Character> character,int damage) override;
         std::string getTheCharacterSymbole() override;

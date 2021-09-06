@@ -25,15 +25,15 @@ namespace mtm
         Soldier& operator=(const Soldier& other)=default;  
         void reloadAmmo() override;
         bool checkIfDead() override;
-        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int* damage) override;
+        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int &damage) override;
         std::shared_ptr<Character> clone() const override;
         void attack(std::shared_ptr<Character> character,int damage) override;
         std::string getTheCharacterSymbole() override;
-        bool checkIfThereCollateralDamage(int* damage) override;
+        bool checkIfThereCollateralDamage() override;
         bool checkIfCharacterSufferedFromCollateralDamage(const GridPoint& character_position,const GridPoint& target_position)override;
+        void attackCharacterHittedFromCollateralDamage(std::shared_ptr<Character> victim) override;
+
     };
 }
-
-       
 
 #endif

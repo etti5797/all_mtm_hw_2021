@@ -25,14 +25,15 @@ namespace mtm
         bool checkIfCordinateInGrid(const GridPoint& coordinates);
         static void updateWinningTeamIfPossible(Team* winningTeam,bool is_crossfitters_present,bool is_powerlifters_present);
         void removeDeadCharacters();
+        int verifyHightOrWidth(int size);
         void verifyCordinatesForAttack(const GridPoint& src_coordinates,const GridPoint& dst_coordinates);
     
       
         public:
         Game(int height, int width);          
-        ~Game()=default;                                                         
-        Game(const Game& other);                                                                                                                
-        Game& operator=(const Game& other);                                             
+        ~Game()=default;                                                       
+        Game(const Game& other);                                                                                                             
+        Game& operator=(const Game& other);                                       
         void addCharacter(const GridPoint& coordinates, std::shared_ptr<Character> character);
         static std::shared_ptr<Character> makeCharacter(CharacterType type, Team team, 
                                                     units_t health, units_t ammo, units_t range, units_t power);
@@ -44,3 +45,4 @@ namespace mtm
     };
 
 }
+  

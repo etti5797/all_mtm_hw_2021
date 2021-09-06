@@ -46,21 +46,21 @@ namespace mtm
         }
     }
     
-    bool Medic::checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int* damage)
+    bool Medic::checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int &damage)
     {
+        if(GridPoint::distance(this->position_on_board,rival_position) > range )
+        {
+            throw OutOfRange();
+        }
         if(rival!=nullptr)
         {
-            if(GridPoint::distance(this->position_on_board,rival_position) > range )
-            {
-                throw OutOfRange();
-            }
             if(this->team != rival->team) 
             {
                 if(this->ammo < 1) //if medic attack the opposite team he need ammo
                 {
                     throw OutOfAmmo();
                 }
-                *damage=(-(this->power));  //in order to reduce health for the opposite team
+                damage=(-(this->power));  //reduce health for the opposite team
             }
             else //same team  
             {
@@ -68,11 +68,15 @@ namespace mtm
                 {
                     throw IllegalTarget();  //can't attack himself
                 }
-                *damage= this->power;  //add health to his team 
+                damage= this->power;  //add health to his team 
             }
             return true;
+        }                  //else rival==nullptr hence the spot is empty, and medic can't attack empty spot  
+        if(this->ammo < 1) //order of exceptions in attack: OutOfAmmo preceeds IllegalTarget
+        {
+            throw OutOfAmmo();
         }
-        throw IllegalTarget();   //else rival==nullptr hence the spot is empty, and medic can't attack empty spot  
+        throw IllegalTarget();  
     } 
 }
 

@@ -30,23 +30,32 @@ namespace mtm
         virtual void attack(std::shared_ptr<Character> character,int damage)=0;
         virtual bool checkIfDead()=0;
         virtual std::string getTheCharacterSymbole()=0;
-        virtual bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int* damage)=0;
+        virtual bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int &damage)=0;
+        virtual bool checkIfMovementIsPossible(const GridPoint& dst_coordinates); 
+
 
         virtual void updateCoordinates(const GridPoint& coordinates);//update the 'position_on_board' of a character after 
                                                                     //she got added to a game
 
-        virtual bool checkIfThereCollateralDamage(int* damage); //check if an attack from the character harm the environment as well,
-                                                                //default is false
+        virtual bool checkIfThereCollateralDamage(); //check if an attack from the character harm the *environment* as well,
+                                                    //default is false
 
-        //check if a given character got harm by an attack aimed at target by a character
+        
+        //attack a character damaged by a collateral attack (she wasn't the target)
+        //default: do nothing (will be updated in characters who do collateral damage)
+        virtual void attackCharacterHittedFromCollateralDamage(std::shared_ptr<Character> victim);
+
+
+        //check if a given *character* in the enviroment got hurt by an attack aimed at target by a character
         //defaule is false, and will be changed only in characters who do collateral damage (like soldier), according to their terms
         virtual bool checkIfCharacterSufferedFromCollateralDamage(const GridPoint& character_position,const GridPoint& target_position);
 
-        virtual bool checkIfMovementIsPossible(const GridPoint& dst_coordinates);
         
     };
 }
 
+
+        
         
  
 

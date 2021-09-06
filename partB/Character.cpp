@@ -11,9 +11,8 @@ namespace mtm
         return;
     }
 
-    bool Character::checkIfThereCollateralDamage(int* damage) //will be different only in character who deals damage 
-    {                                                        //to the nearby environment of their target, like the soldier class
-        *damage=0;
+    bool Character::checkIfThereCollateralDamage() //will be different only in the soldier class
+    {
         return false;
     }
 
@@ -31,7 +30,9 @@ namespace mtm
     {
         return false;
     }
+    void Character::attackCharacterHittedFromCollateralDamage(std::shared_ptr<Character> victim)
+    {
+        return;
+    }
     
 }
-
-        

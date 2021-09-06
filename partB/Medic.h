@@ -19,16 +19,13 @@ namespace mtm
         Medic& operator=(const Medic& other)=default;   
         void reloadAmmo() override;
         bool checkIfDead() override;
-        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int* damage) override;        
+        bool checkIfAttackPossible(std::shared_ptr<Character> rival,const GridPoint& rival_position,int &damage) override;        
         std::shared_ptr<Character> clone() const override; 
         void attack(std::shared_ptr<Character> character,int damage) override;
         std::string getTheCharacterSymbole() override;
 
     };
 }
-
-
-
 
 
 #endif

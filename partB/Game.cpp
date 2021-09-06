@@ -4,13 +4,17 @@
 
 namespace mtm
 {
-    Game::Game(int height, int width):height(height),width(width),grid(height,vector<std::shared_ptr<Character>>(width, nullptr))
+    int Game::verifyHightOrWidth(int size)
     {
-        if(height<=0 || width <=0)
+        if(size<=0)
         {
-            throw IllegalArgument();
-        }                                                            
+           throw IllegalArgument(); 
+        }
+        return size;
     }
+
+    Game::Game(int height, int width):height(verifyHightOrWidth(height)),width(verifyHightOrWidth(width)),
+                                                    grid(height,vector<std::shared_ptr<Character>>(width, nullptr)){}
 
 
     void Game::updateWinningTeamIfPossible(Team* winningTeam,bool is_crossfitters_present,bool is_powerlifters_present)
@@ -42,7 +46,6 @@ namespace mtm
         }
         return;
     }
-
 
     bool Game::checkIfCordinateInGrid(const GridPoint& coordinates)
     {
@@ -111,7 +114,7 @@ namespace mtm
             }
             grid[dst_coordinates.row][dst_coordinates.col]=grid[src_coordinates.row][src_coordinates.col];
             grid[src_coordinates.row][src_coordinates.col]=nullptr;
-            (*(grid[dst_coordinates.row][dst_coordinates.col])).updateCoordinates(dst_coordinates); //update the cords of a character
+            (*(grid[dst_coordinates.row][dst_coordinates.col])).updateCoordinates(dst_coordinates);
         }
         return;
     }
@@ -132,19 +135,26 @@ namespace mtm
 
     Game& Game::operator=(const Game& other)  
     {
-        vector<vector<std::shared_ptr<Character>>> new_grid(other.height,vector<std::shared_ptr<Character>> (other.width, nullptr));
+        vector<vector<std::shared_ptr<Character>>> new_grid(other.height,
+                        vector<std::shared_ptr<Character>> (other.width, nullptr));
         for(int i=0;i<other.height;i++)
         {
             for(int j=0;j<other.width;j++)
             {
-                std::shared_ptr<Character> character_smart_ptr=(other.grid[i][j])->clone();
-                new_grid[i].push_back(character_smart_ptr);
+                if (other.grid[i][j] != nullptr)
+                {
+                    new_grid[i][j] = (other.grid[i][j])->clone();
+                }
+                else
+                {
+                    new_grid[i][j] = nullptr;
+                }
             }
         }
         this->height=other.height;
         this->width=other.width;
-        this->grid=new_grid;
-        return *this;
+        this->grid = new_grid;
+        return (*this);
     }
 
     bool Game::isOver(Team* winningTeam) const
@@ -188,7 +198,7 @@ namespace mtm
                 {
                     if((*(grid[i][j])).health<=0) 
                     {
-                        grid[i][j]=nullptr; //will remove character from grid
+                        grid[i][j]=nullptr; //remove character from grid
                     }
                 }
             }
@@ -203,22 +213,22 @@ namespace mtm
         Character& src_character= (*(grid[src_coordinates.row][src_coordinates.col]));
         std::shared_ptr<Character> dst_character=grid[dst_coordinates.row][dst_coordinates.col];
         int damage=0;
-        if(src_character.checkIfAttackPossible(dst_character,dst_coordinates,&damage)==true) //the damage amount get updated
+        if(src_character.checkIfAttackPossible(dst_character,dst_coordinates,damage)==true) //the damage amount get updated
         {
             src_character.attack(dst_character,damage);
-            if(src_character.checkIfThereCollateralDamage(&damage)==true) //the damage amount get updated
+            if(src_character.checkIfThereCollateralDamage()==true ) 
             {
                 for(int i=0;i<height;i++)
                 {
                     for(int j=0;j<width;j++)
                     {
                         mtm::GridPoint current_character_position=mtm::GridPoint(i,j);
-                        mtm::GridPoint& reference_current_character_position=current_character_position;
+                        mtm::GridPoint& reference_current_character_position=current_character_position;        
                         if(src_character.checkIfCharacterSufferedFromCollateralDamage(reference_current_character_position,
                                                                                                     dst_coordinates)==true)
                         {
                             std::shared_ptr<Character> current_character=grid[i][j];
-                            src_character.attack(current_character,damage);  
+                            src_character.attackCharacterHittedFromCollateralDamage(current_character);
                         }
                     }
                 }
@@ -254,8 +264,7 @@ namespace mtm
         return os;
     }
 
-    Game::Game(const Game& other):height(other.height),width(other.width),
-                                        grid(other.height,vector<shared_ptr<Character>>(other.width,nullptr))
+    Game::Game(const Game& other):height(other.height),width(other.width),grid(other.height,vector<shared_ptr<Character>>(other.width,nullptr))
     {
         for(int i=0;i<other.height;i++)
         {
@@ -277,5 +286,25 @@ namespace mtm
 
 
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
