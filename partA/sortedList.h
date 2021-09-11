@@ -168,7 +168,7 @@ namespace mtm
                 insertAtStart(element);
                 return;
             }
-            if( (tail->data) < element )
+            if( !( (element) <  (tail->data) ) )
             {
                 insertAtEnd(element);
                 return;
@@ -231,6 +231,16 @@ namespace mtm
                 }
                 this->node_ptr=this->node_ptr->next;
                 return *this;
+            }
+            const_iterator operator++(int) //iterator++
+            {
+                const_iterator iterator=const_iterator(*this);
+                if(node_ptr==nullptr)
+                {
+                    throw out_of_range("list out of range");  
+                }
+                ++(*this);
+                return iterator;
             }
 
         };
