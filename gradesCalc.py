@@ -6,7 +6,7 @@ ID_LEN=8
 ID_INDEX=0
 NAME_INDEX=1
 SEMESTER_INDEX=2
-HOMEWORK_AVG=3
+HOMEWORK_AVG_INDEX=3
 AVERAGE_DIVIDE=2
 DISTANCE_TWO_DIGITS_FROM_ID_END=6
 MAX_HOMEWORK_AVG=100
@@ -16,7 +16,7 @@ MIN_HOMEWORK_AVG=51
 #helper functions:#
 
 #check if an id is legal and return truth value accordingly
-def check_id(id: int) ->bool :
+def checkId(id: int) ->bool :
     string_id=str(id)
     length=len(string_id)
     if length!= ID_LEN:
@@ -26,16 +26,16 @@ def check_id(id: int) ->bool :
     return True
 
 #check if a name is legal and return truth value accordingly
-def check_name(name: str) ->bool :
+def checkName(name: str) ->bool :
     if all(letter.isalpha() or letter.isspace() for letter in name):
        return True
     return False
 
 #check the validity of a line's elements and return truth value accordingly
-def check_input_legality(id :int, name: str, semester :int, homework_avg : int) -> bool:
-    if check_id(id)==False:
+def checkInputLegality(id :int, name: str, semester :int, homework_avg : int) -> bool:
+    if checkId(id)==False:
         return False
-    if check_name(name) == False :
+    if checkName(name) == False :
         return False
     if semester < 1 :
         return False
@@ -45,18 +45,21 @@ def check_input_legality(id :int, name: str, semester :int, homework_avg : int) 
 
 #return a new list without duplicated elements with same id,
 #while the new including the last duplicate of each element
-def create_list_without_duplicates_of_element(list: list) ->list: 
+def createListWithoutDuplicatesOfElements(list: list) ->list: 
     list.reverse()
     new_list=[]
+    copied_allready=False
     for item in list:
         for elem in new_list:
             if elem[ID_INDEX]==item[ID_INDEX]:
-                continue
-        new_list.append(item)
+                copied_allready=True
+        if(copied_allready==False):
+            new_list.append(item)
+        copied_allready=False
     return new_list
 
 #define the key in order to sort a list by id
-def take_id(element: int):
+def takeId(element: int):
     return element[ID_INDEX]
 
 
@@ -72,17 +75,18 @@ def final_grade(input_path: str, output_path: str) -> int:
         input_list.append(line.rstrip('\n').split(','))                             
     legal_list=[]  #will contain legal lines, may have duplicates
     for elem in input_list:
-        if check_input_legality(int(elem[ID_INDEX]),elem[NAME_INDEX],int(elem[SEMESTER_INDEX]),int(elem[HOMEWORK_AVG])) == True:
+        if checkInputLegality(int(elem[ID_INDEX]),elem[NAME_INDEX],int(elem[SEMESTER_INDEX]),
+                                                    int(elem[HOMEWORK_AVG_INDEX])) == True:
             legal_list.append(elem) 
-    list_without_duplicates=create_list_without_duplicates_of_element(legal_list)
-    list_without_duplicates.sort(key=take_id)
+    list_without_duplicates=createListWithoutDuplicatesOfElements(legal_list)
+    list_without_duplicates.sort(key=takeId)
     input_file.close()
     output_file=open(output_path, 'w')
     number_of_student = 0
     sum_of_grades = 0
     for elem in list_without_duplicates :
         id="".join(str(elem[ID_INDEX]).split())
-        homework_avg="".join(str(elem[HOMEWORK_AVG]).split())
+        homework_avg="".join(str(elem[HOMEWORK_AVG_INDEX]).split())
         final_digits=(elem[ID_INDEX])[DISTANCE_TWO_DIGITS_FROM_ID_END : ID_LEN]  
         final_grade= (int(final_digits) + int(homework_avg))//AVERAGE_DIVIDE
         sum_of_grades += final_grade
@@ -98,7 +102,7 @@ def final_grade(input_path: str, output_path: str) -> int:
 
 #const:#
 ABC=ord('z')-ord('a')+1
-LOWER_LETTER=ord('a')
+LOWER_SMALLEST_LETTER=ord('a')
 
 
 #### PART 2 ####
@@ -110,10 +114,10 @@ def check_strings(s1: str, s2: str) -> bool:
     s1_lower_case=s1.lower()
     histo_s2_lower_case = [0] * (ABC) #will not hold the correct histogram after the check
     for letter in s2_lower_case:
-        histo_s2_lower_case[ord(letter) - LOWER_LETTER]+=1
+        histo_s2_lower_case[ord(letter) - LOWER_SMALLEST_LETTER]+=1
     for letter in s1_lower_case:
-        if histo_s2_lower_case[ord(letter)-LOWER_LETTER]<=0:
+        if histo_s2_lower_case[ord(letter)-LOWER_SMALLEST_LETTER]<=0:
             return False
-        histo_s2_lower_case[ord(letter)-LOWER_LETTER]-=1
+        histo_s2_lower_case[ord(letter)-LOWER_SMALLEST_LETTER]-=1
     return True
     
